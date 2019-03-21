@@ -28,6 +28,58 @@
     zathura
   ];
 
+  xsession = {
+    enable = true;
+    windowManager.xmonad = {
+      enable = true;
+      enableContribAndExtras = true;
+      extraPackages = haskellPackages: [
+        haskellPackages.xmonad-contrib
+        haskellPackages.xmonad-extras
+        haskellPackages.xmonad
+      ];
+      config = pkgs.writeText "xmonad.hs" ''
+        import XMonad
+        import XMonad.Actions.Volume
+        import XMonad.Hooks.EwmhDesktops
+        import XMonad.Hooks.ManageDocks
+        import XMonad.Layout.NoBorders
+        import XMonad.Util.EZConfig
+
+        myManageHook = manageDocks <+> composeAll
+          [ className =? "mpv" --> doFloat ]
+
+        myKeyBindings =
+          [ ("<XF86AudioMute>", spawn $ "amixer set Master toggle")
+          , ("<XF86AudioLowerVolume>", spawn $ "amixer -q set Master 3%-")
+          , ("<XF86AudioRaiseVolume>", spawn $ "amixer -q set Master 3%+")
+          , ("<XF86AudioMicMute>", spawn $ "amixer set Capture toggle")
+          , ("<XF86MonBrightnessDown>", spawn $ "xbacklight -dec 5")
+          , ("<XF86MonBrightnessUp>", spawn $ "xbacklight -inc 5")
+          ]
+
+        myConfig = defaultConfig
+          { terminal = "termite"
+          , layoutHook = avoidStruts $ smartBorders $ layoutHook defaultConfig
+          , manageHook = myManageHook
+          , handleEventHook = fullscreenEventHook
+          }
+          `additionalKeysP` myKeyBindings
+
+        main = do
+          xmonad $ docks $ myConfig
+      '';
+    };
+    profileExtra = ''
+      feh --bg-scale ~/.backgrounds/ocean.jpg &
+      xinput set-prop "TPPS/2 Elan TrackPoint" "Evdev Wheel Emulation" 1
+      xinput set-prop "TPPS/2 Elan TrackPoint" "Evdev Wheel Emulation Button" 2
+      xinput set-prop "TPPS/2 Elan TrackPoint" "Evdev Wheel Emulation Timeout" 200
+      xinput set-prop "TPPS/2 Elan TrackPoint" "Evdev Wheel Emulation Axes" 6 7 4 5
+      xinput set-prop "TPPS/2 Elan TrackPoint" "Device Accel Constant Deceleration" .5
+    '';
+  };
+
   programs.bash = {
     enable = true;
     historyControl = [

@@ -48,10 +48,6 @@
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
-    sqlite
-    haskellPackages.xmonad-contrib
-    haskellPackages.xmonad-extras
-    haskellPackages.xmonad
     xlibs.xbacklight
     cachix
     powertop
@@ -71,16 +67,6 @@
       enable = true;
       defaultUser = "jason";
     };
-    windowManager.xmonad = {
-      enable = true;
-      enableContribAndExtras = true;
-      extraPackages = haskellPackages: [
-        haskellPackages.xmonad-contrib
-        haskellPackages.xmonad-extras
-        haskellPackages.xmonad
-      ];
-    };
-    windowManager.default = "xmonad";
   };
 
   services.upower.enable = true;
@@ -101,17 +87,6 @@
       "docker"
     ];
   };
-
-#nix = {
-#  binaryCaches = [
-#    "https://cache.nixos.org/"
-#    "https://hie-nix.cachix.org"
-#  ];
-#  binaryCachePublicKeys = [
-#    "hie-nix.cachix.org-1:EjBSHzF6VmDnzqlldGXbi0RM3HdjfTU3yDRi9Pd0jTY="
-#  ];
-#  trustedUsers = [ "root" "jason" ];
-#};
 
   system.stateVersion = "18.09"; # Did you read the comment?
 }
